@@ -5,28 +5,45 @@ import { Link } from "react-router-dom";
 const Participantes = () => {
   const [participantes, setParticipantes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  // 🔹 Llamada al backend
+  // URL base del backend
+  const API_URL =
+    import.meta.env.VITE_API_URL || "https://back-end-congreso.onrender.com";
+
   useEffect(() => {
     const fetchParticipantes = async () => {
+      setLoading(true);
+      setErrorMsg("");
+
       try {
-        const response = await fetch(
-          "https://localhost:5000/api/Participantes"
-        );
+        const response = await fetch(`${API_URL}/api/Participantes`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
         if (!response.ok) {
-          throw new Error("Error al obtener participantes");
+          throw new Error("Error al obtener los participantes");
         }
+
         const data = await response.json();
         setParticipantes(data);
       } catch (error) {
         console.error("Error:", error);
+        setErrorMsg(
+          "❌ No se pudieron cargar los participantes. Verifica tu conexión o el backend."
+        );
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchParticipantes();
-  }, []);
+  }, [API_URL]);
 
-  // 🔍 Filtro de búsqueda
   const filteredParticipantes = participantes.filter((p) =>
     p.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -38,7 +55,7 @@ const Participantes = () => {
         <div className="bg-white rounded-t-xl p-4 shadow-md">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <img src="./tics.png" alt="Logo Congreso" className="w-14 h-14" />
+              <img src="/tics.png" alt="Logo Congreso" className="w-14 h-14" />
               <h1 className="text-xl font-bold text-slate-900">
                 Asistentes Registrados
               </h1>
@@ -55,7 +72,7 @@ const Participantes = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="search"
+              placeholder="Buscar participante..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 border border-slate-400 rounded-full focus:outline-none focus:border-blue-500"
@@ -76,8 +93,17 @@ const Participantes = () => {
           </div>
         </div>
 
+        {/* LISTA */}
         <div className="bg-white rounded-b-xl shadow-md divide-y divide-slate-300">
-          {filteredParticipantes.length > 0 ? (
+          {loading ? (
+            <div className="p-8 text-center text-slate-500">
+              <p className="text-lg">Cargando participantes...</p>
+            </div>
+          ) : errorMsg ? (
+            <div className="p-8 text-center text-red-500">
+              <p>{errorMsg}</p>
+            </div>
+          ) : filteredParticipantes.length > 0 ? (
             filteredParticipantes.map((p) => (
               <div
                 key={p.id}
@@ -85,7 +111,7 @@ const Participantes = () => {
               >
                 <Link to={`/gafete/${p.id}`}>
                   <img
-                    src="./avatar.png"
+                    src={`/${p.avatar || "avatar.png"}`}
                     alt={p.nombre}
                     className="w-16 h-16 rounded-full border-2 border-slate-300"
                   />
@@ -110,7 +136,7 @@ const Participantes = () => {
                       rel="noopener noreferrer"
                       className="hover:underline"
                     >
-                      {p.twitter}
+                      @{p.twitter}
                     </a>
                   </div>
                   <p className="text-slate-600 text-sm">

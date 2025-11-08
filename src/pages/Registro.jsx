@@ -4,6 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 const Registro = () => {
   const navigate = useNavigate();
 
+  // URL de tu API desplegada en Render
+  const API_URL =
+    import.meta.env.VITE_API_URL || "https://back-end-congreso.onrender.com";
+
   const [formData, setFormData] = useState({
     nombre: "",
     apellidos: "",
@@ -31,7 +35,7 @@ const Registro = () => {
     setErrorMsg("");
 
     try {
-      const response = await fetch("https://localhost:5000/api/Participantes", {
+      const response = await fetch(`${API_URL}/api/Participantes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +54,9 @@ const Registro = () => {
       navigate("/");
     } catch (error) {
       console.error("Error:", error);
-      setErrorMsg("Hubo un error al registrar el participante");
+      setErrorMsg(
+        "Hubo un error al registrar el participante. Verifica tu conexión."
+      );
     } finally {
       setLoading(false);
     }
@@ -174,7 +180,7 @@ const Registro = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition-colors"
+            className="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Guardando..." : "Guardar"}
           </button>
