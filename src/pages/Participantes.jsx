@@ -111,7 +111,7 @@ const Participantes = () => {
               >
                 <Link to={`/gafete/${p.id}`}>
                   <img
-                    src={`/${p.avatar || "avatar.png"}`}
+                    src="./avatar.png"
                     alt={p.nombre}
                     className="w-16 h-16 rounded-full border-2 border-slate-300"
                   />
@@ -136,7 +136,7 @@ const Participantes = () => {
                       rel="noopener noreferrer"
                       className="hover:underline"
                     >
-                      @{p.twitter}
+                      {p.twitter}
                     </a>
                   </div>
                   <p className="text-slate-600 text-sm">

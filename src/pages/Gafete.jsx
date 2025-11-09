@@ -80,7 +80,7 @@ const Gafete = () => {
           </div>
 
           <img
-            src={`/${participante.avatar || "avatar.png"}`}
+            src="./avatar.png"
             alt="avatar"
             className="w-28 h-28 rounded-full border-4 border-green-600 mb-4"
           />
@@ -106,7 +106,7 @@ const Gafete = () => {
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline"
                 >
-                  @{participante.twitter}
+                  {participante.twitter}
                 </a>
               </p>
             )}
